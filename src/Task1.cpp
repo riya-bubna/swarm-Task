@@ -1,0 +1,76 @@
+#include "ros/ros.h"
+#include <math.h>
+#include "geometry_msgs/Twist.h"
+#include "nav_msgs/Odometry.h"
+#include "std_msgs/String.h"
+
+using namespace std;
+
+double X;
+double Y;
+
+void odomcallBack(nav_msgs::Odometry msg)
+{
+    X = msg.pose.pose.position.x;
+    Y = msg.pose.pose.position.y;
+    printf("%lf %lf\n",X,Y);
+}
+
+int main(int argc, char **argv)
+{
+
+  ros::init(argc,argv,"eight");
+
+  ros::NodeHandle n;
+  ros::Publisher vel_pub_0 = n.advertise<geometry_msgs::Twist>("/swarmbot0/cmd_vel",1);
+  ros::Subscriber sub=n.subscribe<nav_msgs::Odometry>("/swarmbot0/odom",1000,odomcallBack);
+
+  int count = 0;
+  ros::Rate loop_rate(5);
+ 
+
+  while (ros::ok())
+  {
+    geometry_msgs::Twist cmd_vel;
+    
+//    double x_start = X;
+ //   double y_start= Y;
+    cmd_vel.linear.x = 2.0;
+    cmd_vel.linear.y = 0;
+    cmd_vel.linear.z= 0;
+	cmd_vel.angular.x = 0;
+	cmd_vel.angular.y = 0;
+
+    cmd_vel.angular.z = 1.8;
+/*
+    while((abs(x_start-X)<0.001) &&(abs(y_start-Y)<0.001 ));
+    while((abs(x_start-X)>0.001) &&(abs(y_start-Y)>0.001 ));
+    cmd_vel.linear.x = 0;
+    cmd_vel.linear.y = 0;
+    cmd_vel.angular.z = 0;
+
+    x_start = X;
+    y_start = Y;
+
+    cmd_vel.linear.x = 2;
+    cmd_vel.linear.y = 0;
+    cmd_vel.angular.z = -1.8;
+	
+    while((abs(x_start-X)<0.001) &&(abs(y_start-Y)<0.001 ));
+    while((abs(x_start-X)>0.001) &&(abs(y_start-Y)>0.001 ));
+    cmd_vel.linear.x = 0;
+    cmd_vel.linear.y = 0;
+    cmd_vel.angular.z = 0;
+	*/
+
+    vel_pub_0.publish(cmd_vel);
+
+    ros::spin();
+
+    loop_rate.sleep();
+
+    ++count;
+    //ros::spinOnce();
+  }
+  return 0;
+}
