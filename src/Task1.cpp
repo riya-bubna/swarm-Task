@@ -50,6 +50,7 @@ int main(int argc, char **argv)
     }
     if((abs(x_start-X)<0.01) &&(abs(y_start-Y)<0.01 ))
   	{
+  		state=1;
   		if(state==0)
   		{
   			state=1;
